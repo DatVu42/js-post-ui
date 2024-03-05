@@ -5,9 +5,8 @@ export function setTextContent(parent, selector, text) {
     if (liElement) liElement.textContent = text
 }
 
-export function setImg(parent, selector, img) {
-    if (!parent) return
+export function truncateText(text, maxLength) {
+    if (text.length < maxLength) return text
 
-    const liElement = parent.querySelector(selector)
-    if (liElement) liElement.src = img
+    return `${text.slice(1, maxLength - 1)}…`
 }

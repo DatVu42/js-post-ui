@@ -1,5 +1,9 @@
+import dayjs from 'dayjs'
 import postApi from './api/postApi'
-import { setImg, setTextContent } from './utils'
+import { setTextContent, truncateText } from './utils'
+import relativeTime from 'dayjs/plugin/relativeTime'
+// use for time now
+dayjs.extend(relativeTime)
 
 function createPostElement(post) {
   if (!post) return
@@ -13,9 +17,22 @@ function createPostElement(post) {
 
   // set title, description, author, time and img
   setTextContent(liElement, '[data-id="title"]', post.title)
-  setTextContent(liElement, '[data-id="description"]', post.description)
+  setTextContent(liElement, '[data-id="description"]', truncateText(post.description, 100))
   setTextContent(liElement, '[data-id="author"]', post.author)
-  setImg(liElement, '[data-id="thumbnail"]', post.imageUrl)
+
+  // setImg(liElement, '[data-id="thumbnail"]', post.imageUrl)
+
+  const timeSpan = dayjs(post.updatedAt).fromNow()
+  setTextContent(liElement, '[data-id="timeSpan"]', ` - ${timeSpan}`)
+
+  const thumbnailElement = liElement.querySelector('[data-id="thumbnail"]')
+  if (thumbnailElement) {
+    thumbnailElement.src = post.imageUrl
+
+    thumbnailElement.addEventListener('error', () => {
+      thumbnailElement.src = 'https://placehold.co/1368x400?text=Thumbnail'
+    })
+  }
 
   return liElement
 }
